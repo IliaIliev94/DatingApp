@@ -9,19 +9,19 @@
       <div class="card-body">
         <div>
           <strong>Location:</strong>
-          <p>{{ member.city }}, {{member.country}}</p>
+          <p>{{ member.city }}, {{ member.country }}</p>
         </div>
         <div>
           <strong>Age:</strong>
-          <p>{{member.age}}</p>
+          <p>{{ member.age }}</p>
         </div>
         <div>
           <strong>Last Active:</strong>
-          <p>{{ member.lastActive | date}}</p>
+          <p>{{ member.lastActive | timeago }}</p>
         </div>
         <div>
           <strong>Member Since:</strong>
-          <p>{{ member.created }}</p>
+          <p>{{ member.created | date: 'dd MMMM yyyy' }}</p>
         </div>
         <div class="card-footer">
           <div class="btn-group d-flex">

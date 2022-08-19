@@ -22,10 +22,12 @@ export class ListsComponent implements OnInit {
   }
 
   loadLikes() {
-    this.membersService.getLikes(this.predicate, this.pageNumber, this.pageSize).subscribe((response) => {
-      this.members = response.result;
-      this.pagination = response.pagination;
-    });
+    this.membersService
+      .getLikes(this.predicate, this.pageNumber, this.pageSize)
+      .subscribe((response) => {
+        this.members = response.result;
+        this.pagination = response.pagination;
+      });
   }
 
   pageChanged(event: any) {

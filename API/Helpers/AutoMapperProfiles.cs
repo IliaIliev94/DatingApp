@@ -12,9 +12,9 @@ namespace API.Helpers
             CreateMap<AppUser, MemberDto>()
                 .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(source =>
                     source.Photos.FirstOrDefault(x => x.IsMain).Url))
-                .ForMember(dest => dest.Age, opt => opt.MapFrom(source => 
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(source =>
                     source.DateOfBirth.CalculateAge()));
-                    
+
             CreateMap<Photo, PhotoDto>();
 
             CreateMap<MemberUpdateDto, AppUser>();
@@ -22,10 +22,13 @@ namespace API.Helpers
             CreateMap<RegisterDto, AppUser>();
 
             CreateMap<Message, MessageDto>()
-                .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(source => 
+                .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(source =>
                     source.Sender.Photos.FirstOrDefault(photo => photo.IsMain).Url))
                 .ForMember(dest => dest.RecipientPhotoUrl, opt => opt.MapFrom(source =>
-                    source.Recipient.Photos.FirstOrDefault(photo => photo.IsMain).Url));
+                    source.Recipient.Photos.FirstOrDefault(photo => photo.IsMain).Url))
+                .ForMember(dest => dest.DateRead, opt => opt.MapFrom(source => source.DateRead == null ? null : (DateTime?)new DateTime(source.DateRead.Value.Ticks, DateTimeKind.Utc)));
+
+            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
         }
     }
 }

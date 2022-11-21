@@ -21,14 +21,13 @@ namespace API.Helpers
 
             CreateMap<RegisterDto, AppUser>();
 
+            CreateMap<MessageDto, MessageDto>();
+
             CreateMap<Message, MessageDto>()
                 .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(source =>
                     source.Sender.Photos.FirstOrDefault(photo => photo.IsMain).Url))
                 .ForMember(dest => dest.RecipientPhotoUrl, opt => opt.MapFrom(source =>
-                    source.Recipient.Photos.FirstOrDefault(photo => photo.IsMain).Url))
-                .ForMember(dest => dest.DateRead, opt => opt.MapFrom(source => source.DateRead == null ? null : (DateTime?)new DateTime(source.DateRead.Value.Ticks, DateTimeKind.Utc)));
-
-            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+                    source.Recipient.Photos.FirstOrDefault(photo => photo.IsMain).Url));
         }
     }
 }

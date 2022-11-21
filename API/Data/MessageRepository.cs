@@ -57,15 +57,16 @@ namespace API.Data
         {
             var query = _context.Messages
                 .OrderByDescending(message => message.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .AsQueryable();
 
             query = messageParams.Container switch
             {
-                "Inbox" => query.Where(user => user.Recipient.UserName == messageParams.Username
+                "Inbox" => query.Where(user => user.RecipientUsername == messageParams.Username
                     && user.RecipientDeleted == false),
-                "Outbox" => query.Where(user => user.Sender.UserName == messageParams.Username
+                "Outbox" => query.Where(user => user.SenderUsername == messageParams.Username
                     && user.SenderDeleted == false),
-                _ => query.Where(user => user.Recipient.UserName == messageParams.Username
+                _ => query.Where(user => user.RecipientUsername == messageParams.Username
                     && user.RecipientDeleted == false && user.DateRead == null)
             };
 
@@ -86,10 +87,11 @@ namespace API.Data
                     (message.Recipient.UserName == recipientUsername
                     && message.Sender.UserName == currentUsername && message.SenderDeleted == false))
                 .OrderBy(message => message.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
             var unreadMessages = messages.Where(message => message.DateRead == null
-                && message.Recipient.UserName == currentUsername).ToList();
+                && message.RecipientUsername == currentUsername).ToList();
 
             if (unreadMessages.Any())
             {
@@ -106,11 +108,6 @@ namespace API.Data
         public void RemoveConnection(Connection connection)
         {
             _context.Connections.Remove(connection);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<Group> GetGroupForConnection(string connectionId)

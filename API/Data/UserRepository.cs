@@ -40,14 +40,14 @@ namespace API.Data
 
             query = query.Where(user => user.DateOfBirth >= minDob && user.DateOfBirth <= maxDob);
 
-            query = userParams.OrderBy switch 
+            query = userParams.OrderBy switch
             {
                 "created" => query.OrderByDescending(user => user.Created),
                 _ => query.OrderByDescending(user => user.LastActive)
             };
-            
+
             return await PagedList<MemberDto>
-                .CreateAsync(query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).AsNoTracking(), 
+                .CreateAsync(query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).AsNoTracking(),
                 userParams.PageNumber, userParams.PageSize);
         }
 
@@ -63,16 +63,19 @@ namespace API.Data
                 .SingleOrDefaultAsync(user => user.UserName == username);
         }
 
+        public async Task<string> GetUserGender(string username)
+        {
+            return await _context.Users
+                .Where(x => x.UserName == username)
+                .Select(x => x.Gender)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
             return await _context.Users
                 .Include(user => user.Photos)
                 .ToArrayAsync();
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
         }
 
         public void Update(AppUser user)
